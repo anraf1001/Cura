@@ -48,11 +48,16 @@ Rectangle
         }
     }
 
-    function showTooltip(item, position, text)
+    function showTooltip(item, position, text, enable_scrolling)
     {
-        tooltip.text = text;
+        if (typeof enable_scrolling === "undefined" || typeof enable_scrolling !== "undefined" && enable_scrolling == false){
+            tooltip.text = text;
+        }else{
+            tooltip.scroll_text = text
+        }
+
         position = item.mapToItem(base, position.x - UM.Theme.getSize("default_arrow").width, position.y);
-        tooltip.show(position);
+        tooltip.show(position, enable_scrolling);
     }
 
     function hideTooltip()
@@ -356,26 +361,16 @@ Rectangle
                         {
                             if(!print_time[feature].isTotalDurationZero)
                             {
-                                var feature_name = "";
 
-                                if (feature.length <= 11)
-                                {
-                                    feature_name = feature
-                                }
-                                else{
-                                    feature_name = feature.substring(0, 8) + "..."
-                                }
-
-
-                                content += "<tr><td>" + feature_name + ":" +
-                                    "&nbsp;&nbsp;</td><td>" + print_time[feature].getDisplayString(UM.DurationFormat.Short) +
-                                    "&nbsp;&nbsp;</td><td>" + Math.round(100 * parseInt(print_time[feature].getDisplayString(UM.DurationFormat.Seconds)) / total_seconds) + "%" +
+                                content += "<tr width='150'><td width='100'><scroll>" + feature + ":" +
+                                    "</scroll></td><td>&nbsp;&nbsp;" + print_time[feature].getDisplayString(UM.DurationFormat.Short) +
+                                    "</td><td>&nbsp;&nbsp;" + Math.round(100 * parseInt(print_time[feature].getDisplayString(UM.DurationFormat.Seconds)) / total_seconds) + "%" +
                                     "</td></tr>";
                             }
                         }
                         content += "</table>";
 
-                        base.showTooltip(parent, Qt.point(-UM.Theme.getSize("sidebar_margin").width, 0), content);
+                        base.showTooltip(parent, Qt.point(-UM.Theme.getSize("sidebar_margin").width, 0), content, true);
                     }
                 }
                 onExited:
